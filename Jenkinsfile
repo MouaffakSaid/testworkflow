@@ -7,8 +7,8 @@ pipeline {
         // BE_VERSION = readFile(file: 'PMCBackEnd/projectVersion.txt').trim()
         // FINAL_VERSION = "${BE_VERSION}"+"-"+"${env.GIT_BRANCH}"
         BE_VERSION = "${env.BUILD_NUMBER}"+"-"+"${env.GIT_BRANCH}"
-       // TEAMS_WEBHOOK_URL = "https://prod-110.westeurope.logic.azure.com:443/workflows/daccb247bd0e4c74afaa60b111fbeb78/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=4hTMPW0J90sS5w5T25VeakKjEt1rRYERYUytUCqS1yw"
-       TEAMS_WEBHOOK_URL = "https://webhook.site/8644374c-1c15-4410-b009-38df898ae719"
+       TEAMS_WEBHOOK_URL = "https://prod-110.westeurope.logic.azure.com:443/workflows/daccb247bd0e4c74afaa60b111fbeb78/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=4hTMPW0J90sS5w5T25VeakKjEt1rRYERYUytUCqS1yw"
+      // TEAMS_WEBHOOK_URL = "https://webhook.site/8644374c-1c15-4410-b009-38df898ae719"
     }
     
     options {
