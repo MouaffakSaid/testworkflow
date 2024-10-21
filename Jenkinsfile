@@ -70,13 +70,32 @@ pipeline {
            }
         }
     }
-    post{
-	    success {
-            office365ConnectorSend color: '#86BC25', 
-		                           status: "${currentBuild.currentResult}", 
-		                           webhookUrl: "${TEAMS_WEBHOOK_URL}",
-		                           message: "Build Success: ${JOB_NAME} - ${currentBuild.displayName}<br>Pipeline duration: ${currentBuild.durationString.replace(' and counting', '')}"
-         }
+     post {
+        success {
+            script {
+                def webhookUrl = "${TEAMS_WEBHOOK_URL}"
+                def jobName = env.JOB_NAME
+                def buildName = currentBuild.displayName
+                def buildDuration = currentBuild.durationString.replace(' and counting', '')
+                def message = """
+                {
+                    "text": "Build Success: ${jobName} - ${buildName}<br>Pipeline duration: ${buildDuration}"
+                }
+                """
+
+                // Log the message payload
+                echo "Webhook payload: ${message}"
+
+                // Send the webhook
+                httpRequest(
+                    url: webhookUrl,
+                    httpMode: 'POST',
+                    contentType: 'APPLICATION_JSON',
+                    requestBody: message
+                )
+            }
+        }
+    }
         failure {
             office365ConnectorSend color: '#ff0000',
 		                           status: "${currentBuild.currentResult}",
