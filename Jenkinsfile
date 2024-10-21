@@ -74,13 +74,13 @@ pipeline {
             office365ConnectorSend color: '#86BC25', 
 		                           status: "${currentBuild.currentResult}", 
 		                           webhookUrl: "${TEAMS_WEBHOOK_URL}",
-		                           message: "Build Success: ${JOB_NAME} - ${currentBuild.displayName}<br>Pipeline duration: ${currentBuild.durationString.replace(' and counting', '')}<br> Committed by: ${env.GIT_AUTHOR}"
+		                           message: "Build Success: ${JOB_NAME} - ${currentBuild.displayName}<br>Pipeline duration: ${currentBuild.durationString.replace(' and counting', '')}"
          }
         failure {
             office365ConnectorSend color: '#ff0000',
 		                           status: "${currentBuild.currentResult}",
 		                           webhookUrl: "${TEAMS_WEBHOOK_URL}",
-                                    message: "Build Failed: ${JOB_NAME} - ${currentBuild.displayName}<br>Pipeline duration: ${currentBuild.durationString.replace(' and counting', '')}<br> Committed by: ${env.GIT_AUTHOR}"
+                                    message: "Build Failed: ${JOB_NAME} - ${currentBuild.displayName}<br>Pipeline duration: ${currentBuild.durationString.replace(' and counting', '')}"
          }
         always {
             cleanWs(deleteDirs: true)
