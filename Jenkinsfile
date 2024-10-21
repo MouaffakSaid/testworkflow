@@ -71,41 +71,159 @@ pipeline {
         }
     }
      post {
-        success {
+        always {
             script {
-                def webhookUrl = "${TEAMS_WEBHOOK_URL}"
-                def jobName = env.JOB_NAME
-                def buildName = currentBuild.displayName
-                def buildDuration = currentBuild.durationString.replace(' and counting', '')
-                def message = """
-                {
-                    "text": "Build Success: ${jobName} - ${buildName}<br>Pipeline duration: ${buildDuration}"
-                }
-                """
-
-                // Log the message payload
-                echo "Webhook payload: ${message}"
-
-                // Send the webhook
-                httpRequest(
-                    url: webhookUrl,
-                    httpMode: 'POST',
-                    contentType: 'APPLICATION_JSON',
-                    requestBody: message
-                )
+                msteamsNotification()
             }
         }
-    
-        failure {
-            office365ConnectorSend color: '#ff0000',
-		                           status: "${currentBuild.currentResult}",
-		                           webhookUrl: "${TEAMS_WEBHOOK_URL}",
-                                    message: "Build Failed: ${JOB_NAME} - ${currentBuild.displayName}<br>Pipeline duration: ${currentBuild.durationString.replace(' and counting', '')}"
-         }
-        always {
-            cleanWs(deleteDirs: true)
-            echo "switch docker context to default !"
-            sh "docker context use default"
-        }
     }
+}
+
+def msteamsNotification() {
+    def appName = 'YourAppName' // Replace this with actual app name if it's fetched dynamically
+    def workflowUrl = params.WEBHOOK_URL // The URL from user provided as parameter
+    def prTitle = env.CHANGE_TITLE ?: "N/A"
+    def prNumber = env.CHANGE_ID ?: "N/A"
+    def buildStatus = currentBuild.currentResult ?: "N/A"
+    def prAuthor = env.CHANGE_AUTHOR_DISPLAY_NAME ?: env.CHANGE_AUTHOR ?: "N/A"
+    def buildStartTime = new Date(currentBuild.startTimeInMillis + currentBuild.duration).format("yyyy-MM-dd HH:mm:ss")
+    def imageUrl = "https://www.jenkins.io/images/logos/jenkins/jenkins.png"
+    def bldStatus = "Jenkins Build SUCCESS"
+    def bldStatusColor = "Good"
+    def stageStatus = "All Stages Passed"
+
+    if (buildStatus == 'FAILURE') {
+        imageUrl = "https://www.jenkins.io/images/logos/fire/fire.png"
+        bldStatus = "Jenkins Build FAIL"
+        bldStatusColor = "warning"
+        stageStatus = "${currentStage}"
+    }
+
+    def payload = """
+    {
+        "type": "message",
+        "attachments": [
+            {
+                "contentType": "application/vnd.microsoft.card.adaptive",
+                "content": {
+                    "\$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.6",
+                    "body": [
+                        {
+                            "type": "TextBlock",
+                            "size": "Medium",
+                            "weight": "Bolder",
+                            "text": "Build Notification"
+                        },
+                        {
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "Image",
+                                            "url": "${imageUrl}",
+                                            "altText": "Jenkins Logo",
+                                            "size": "Medium",
+                                            "height": "50px",
+                                            "width": "48px"
+                                        }
+                                    ],
+                                    "width": "auto"
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "weight": "Bolder",
+                                            "text": "${bldStatus}",
+                                            "color": "${bldStatusColor}",
+                                            "wrap": true,
+                                            "style": "heading",
+                                            "size": "ExtraLarge",
+                                            "isSubtle": true
+                                        },
+                                        {
+                                            "type": "TextBlock",
+                                            "spacing": "None",
+                                            "text": "Build end time: ${buildStartTime}",
+                                            "wrap": true,
+                                            "isSubtle": true
+                                        }
+                                    ],
+                                    "width": "auto",
+                                    "verticalContentAlignment": "Center"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "FactSet",
+                            "separator": true,
+                            "facts": [
+                                {
+                                    "title": "App Name:",
+                                    "value": "${appName}"
+                                },
+                                {
+                                    "title": "Stage:",
+                                    "value": "${stageStatus}"
+                                },
+                                {
+                                    "title": "Job Name:",
+                                    "value": "${env.JOB_BASE_NAME}"
+                                },
+                                {
+                                    "title": "Build Number:",
+                                    "value": "${env.BUILD_NUMBER}"
+                                },
+                                {
+                                    "title": "PR Number:",
+                                    "value": "${prNumber}"
+                                },
+                                {
+                                    "title": "Commit Author:",
+                                    "value": "${prAuthor}"
+                                }
+                            ],
+                            "spacing": "Medium",
+                            "separator": true
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "PR Title: ${prTitle}",
+                            "wrap": true,
+                            "spacing": "Medium",
+                            "separator": true,
+                            "maxLines": 2,
+                            "size": "Small",
+                            "fontType": "Monospace",
+                            "weight": "Bolder",
+                            "color": "Accent"
+                        }
+                    ],
+                    "actions": [
+                        {
+                            "type": "Action.OpenUrl",
+                            "title": "View ${appName} Build",
+                            "url": "${env.BUILD_URL}",
+                            "iconUrl": "https://i.ibb.co/Ks2JKfG/cloudbees-logo-icon-168396.png"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+    """
+    
+    // Method to send a notification to MS Teams
+    httpRequest(
+        httpMode: 'POST',
+        acceptType: 'APPLICATION_JSON',
+        contentType: 'APPLICATION_JSON',
+        url: workflowUrl,
+        requestBody: payload
+    )
 }
