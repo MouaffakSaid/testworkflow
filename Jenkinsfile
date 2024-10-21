@@ -95,7 +95,7 @@ pipeline {
                 )
             }
         }
-    }
+    
         failure {
             office365ConnectorSend color: '#ff0000',
 		                           status: "${currentBuild.currentResult}",
