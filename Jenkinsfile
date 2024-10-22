@@ -201,7 +201,7 @@ def msteamsNotification() {
                             "wrap": true,
                             "spacing": "Medium",
                             "separator": true,
-                            "maxLines": 2,
+                            "maxLines": 1,
                             "size": "Small",
                             "fontType": "Monospace",
                             "weight": "Bolder",
