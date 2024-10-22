@@ -87,7 +87,7 @@ pipeline {
 
 def msteamsNotification() {
     def appName = 'YourAppName' // Replace this with actual app name if it's fetched dynamically
-    def workflowUrl = ${TEAMS_WEBHOOK_URL} // The URL from user provided as parameter
+    def workflowUrl = $"{TEAMS_WEBHOOK_URL}" // The URL from user provided as parameter
     def prTitle = env.CHANGE_TITLE ?: "N/A"
     def prNumber = env.CHANGE_ID ?: "N/A"
     def buildStatus = currentBuild.currentResult ?: "N/A"
