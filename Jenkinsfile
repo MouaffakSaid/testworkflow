@@ -76,6 +76,9 @@ pipeline {
      post {
         always {
             script {
+		    	
+	       env.GIT_AUTHOR = sh (script: 'git show -s --pretty=%an', returnStdout: true).trim()
+		
                 msteamsNotification()
             }
         }
