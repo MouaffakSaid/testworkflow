@@ -188,7 +188,7 @@ def msteamsNotification() {
                                 },
                                 {
                                     "title": "Commit Author:",
-                                    "value": "{env.GIT_AUTHOR}"
+                                    "value": "${env.GIT_AUTHOR}"
 				    
                                 }
                             ],
