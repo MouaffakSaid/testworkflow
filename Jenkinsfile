@@ -100,7 +100,7 @@ pipeline {
 }
 
 def msteamsNotification(buildStatus) {
-    def appName = 'PMC Backend' // Set your app name here
+    def appName = 'APP NAME' // Set your app name here
     def workflowUrl = TEAMS_WEBHOOK_URL
     def buildStartTime = new Date(currentBuild.startTimeInMillis + currentBuild.duration).format("yyyy-MM-dd HH:mm:ss")
     def imageUrl = "https://www.jenkins.io/images/logos/jenkins/jenkins.png"
