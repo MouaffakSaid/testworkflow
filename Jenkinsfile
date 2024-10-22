@@ -93,7 +93,7 @@ def msteamsNotification(buildStatus) {
         imageUrl = "https://www.jenkins.io/images/logos/fire/fire.png"
         bldStatus = "Jenkins Build FAILED"
         bldStatusColor = "Warning"
-        stageStatus = "Some Stages Failed"
+        stageStatus = "Failed in stage: ${env.failedStage}"
     }
 
     def payload = """
