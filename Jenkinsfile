@@ -197,7 +197,7 @@ def msteamsNotification() {
                         },
 			{
                             "type": "TextBlock",
-                            "text": "",
+                            "text": "    ",
                             "wrap": true,
                             "spacing": "Medium",
                             "separator": true,
