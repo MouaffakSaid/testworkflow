@@ -78,8 +78,13 @@ pipeline {
             script {
 		    	
 	       
-		
+		try {
+                env.GIT_AUTHOR = sh(script: 'git show -s --pretty=%an', returnStdout: true).trim()
                 msteamsNotification()
+            } catch (Exception e) {
+                echo "Error in msteamsNotification: ${e}"
+            }
+        }
             }
         }
     }
