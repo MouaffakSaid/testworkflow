@@ -17,7 +17,13 @@ pipeline {
         stage('say hi') {
             steps {
                 sh "pwd"
-                FAILED_STAGE= "${env.STAGE_NAME}"
+            }
+            post {
+                always {
+                    script {
+                        FAILED_STAGE = "${env.STAGE_NAME}" // Capture the stage name
+                    }
+                }
             }
         }
 
@@ -35,7 +41,13 @@ pipeline {
                     sh "docker login ${REGISTRY} -u $username -p $password"
                     sh "docker tag ${IMAGE_NAME} ${REGISTRY}/pmc/${IMAGE_NAME}:${BE_VERSION}"
                     sh "docker push ${REGISTRY}/pmc/${IMAGE_NAME}:${BE_VERSION}"
-                    FAILED_STAGE= "${env.STAGE_NAME}"
+                }
+            }
+            post {
+                always {
+                    script {
+                        FAILED_STAGE = "${env.STAGE_NAME}" // Capture the stage name
+                    }
                 }
             }
         }
@@ -61,7 +73,13 @@ pipeline {
                 fi
                 """
                 sh "docker run -d --name ${env.GIT_BRANCH} --restart always --env-file ./.env -v /etc/localtime:/etc/localtime:ro -v /home/pmc/log/DevelopFlutter/:/tmp -p ${PORT}:8000 ${REGISTRY}/pmc/${IMAGE_NAME}:${BE_VERSION}"
-                FAILED_STAGE= "${env.STAGE_NAME}"
+            }
+            post {
+                always {
+                    script {
+                        FAILED_STAGE = "${env.STAGE_NAME}" // Capture the stage name
+                    }
+                }
             }
         }
     }
@@ -95,7 +113,7 @@ def msteamsNotification(buildStatus) {
         imageUrl = "https://www.jenkins.io/images/logos/fire/fire.png"
         bldStatus = "Jenkins Build FAILED"
         bldStatusColor = "Warning"
-        stageStatus = "Failed in stage: ${env.failedStage}"
+        stageStatus = "Failed in stage: ${FAILED_STAGE}"
     }
 
     def payload = """
