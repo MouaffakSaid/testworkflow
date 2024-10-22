@@ -64,16 +64,14 @@ pipeline {
     post {
         always {
             script {
-                try {
-                    // Capture the Git author name
+                
                     env.GIT_AUTHOR = sh(script: 'git show -s --pretty=%an', returnStdout: true).trim()
                     // Send notification
                     msteamsNotification(currentBuild.currentResult)
-                } catch (Exception e) {
-                    // Log the error if the notification fails
-                    echo "Error in sending Teams notification: ${e}"
-                }
-            }
+                
+                   
+               
+            
         }
     }
 }
