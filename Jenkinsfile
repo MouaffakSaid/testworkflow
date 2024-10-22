@@ -33,7 +33,7 @@ pipeline {
                     branch 'DevelopFlutter'
                     branch 'RafikBranch'
                     branch 'OmranBranch'
-                    branch 'main'
+                    branch 'ff'
                 }
             }
             steps {
