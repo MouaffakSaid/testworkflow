@@ -209,7 +209,7 @@ def msteamsNotification(buildStatus) {
                         {
                             "type": "Action.OpenUrl",
                             "title": "View ${appName} Build",
-                            "url": "${env.BUILD_URL}",
+                            "url": "${env.BUILD_URL}/console",
                             "iconUrl": "https://i.ibb.co/Ks2JKfG/cloudbees-logo-icon-168396.png"
                         }
                     ]
