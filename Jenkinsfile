@@ -197,6 +197,11 @@ def msteamsNotification(buildStatus) {
                                     "value": "${env.BUILD_NUMBER}"
                                 },
                                 {
+                                    "title": "Pipeline duration:",
+                                    "value": "${currentBuild.durationString.replace(' and counting', '')}"
+                                },
+                                
+                                {
                                     "title": "Commit Author:",
                                     "value": "${env.GIT_AUTHOR}"
                                 }
