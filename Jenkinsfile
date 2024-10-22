@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        failedStage = ""
+        FAILED_STAGE = ''
         IMAGE_NAME = 'pmcbackend'
         REGISTRY = 'harbor-reg.zetabox.tn'
         BE_VERSION = "${env.BUILD_NUMBER}-${env.GIT_BRANCH}"
@@ -17,7 +17,7 @@ pipeline {
         stage('say hi') {
             steps {
                 sh "pwd"
-                failedStage=env.STAGE_NAME
+                FAILED_STAGE= "${env.STAGE_NAME}"
             }
         }
 
@@ -35,7 +35,7 @@ pipeline {
                     sh "docker login ${REGISTRY} -u $username -p $password"
                     sh "docker tag ${IMAGE_NAME} ${REGISTRY}/pmc/${IMAGE_NAME}:${BE_VERSION}"
                     sh "docker push ${REGISTRY}/pmc/${IMAGE_NAME}:${BE_VERSION}"
-                    failedStage=env.STAGE_NAME
+                    FAILED_STAGE= "${env.STAGE_NAME}"
                 }
             }
         }
@@ -61,7 +61,7 @@ pipeline {
                 fi
                 """
                 sh "docker run -d --name ${env.GIT_BRANCH} --restart always --env-file ./.env -v /etc/localtime:/etc/localtime:ro -v /home/pmc/log/DevelopFlutter/:/tmp -p ${PORT}:8000 ${REGISTRY}/pmc/${IMAGE_NAME}:${BE_VERSION}"
-                failedStage=env.STAGE_NAME
+                FAILED_STAGE= "${env.STAGE_NAME}"
             }
         }
     }
