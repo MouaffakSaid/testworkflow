@@ -1,9 +1,9 @@
 
 pipeline {
     agent any
-	parameters {
-        string(name: 'WEBHOOK_URL', defaultValue: 'https://prod-110.westeurope.logic.azure.com:443/workflows/daccb247bd0e4c74afaa60b111fbeb78/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=4hTMPW0J90sS5w5T25VeakKjEt1rRYERYUytUCqS1yw', description: 'Microsoft Teams Webhook URL')
-    }
+	
+        
+    
     environment {
         IMAGE_NAME = 'pmcbackend'
         REGISTRY = 'harbor-reg.zetabox.tn'
@@ -87,7 +87,7 @@ pipeline {
 
 def msteamsNotification() {
     def appName = 'YourAppName' // Replace this with actual app name if it's fetched dynamically
-    def workflowUrl = params.WEBHOOK_URL // The URL from user provided as parameter
+    def workflowUrl = ${TEAMS_WEBHOOK_URL} // The URL from user provided as parameter
     def prTitle = env.CHANGE_TITLE ?: "N/A"
     def prNumber = env.CHANGE_ID ?: "N/A"
     def buildStatus = currentBuild.currentResult ?: "N/A"
@@ -185,10 +185,7 @@ def msteamsNotification() {
                                     "title": "Build Number:",
                                     "value": "${env.BUILD_NUMBER}"
                                 },
-                                {
-                                    "title": "PR Number:",
-                                    "value": "${prNumber}"
-                                },
+                               
                                 {
                                     "title": "Commit Author:",
                                     "value": "${env.GIT_AUTHOR}"
@@ -198,18 +195,7 @@ def msteamsNotification() {
                             "spacing": "Medium",
                             "separator": true
                         },
-                        {
-                            "type": "TextBlock",
-                            "text": "PR Title: ${prTitle}",
-                            "wrap": true,
-                            "spacing": "Medium",
-                            "separator": true,
-                            "maxLines": 2,
-                            "size": "Small",
-                            "fontType": "Monospace",
-                            "weight": "Bolder",
-                            "color": "Accent"
-                        }
+                        
                     ],
                     "actions": [
                         {
